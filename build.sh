@@ -58,7 +58,7 @@ CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
             --arch="${ARCH}" \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
-            --enable-shared --disable-symver --disable-doc
+            --enable-shared --disable-static --disable-symver --disable-doc
 
 make -j16
 
