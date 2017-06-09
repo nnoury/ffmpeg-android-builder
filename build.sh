@@ -8,7 +8,7 @@ ANDROID_API=21
 CROSS_DIR="$(mktemp -d)"
 
 ${NDK_PATH}/build/tools/make_standalone_toolchain.py \
-            --arch arm --api ${ANDROID_API} \
+            --arch "${ARCH}" --api ${ANDROID_API} \
             --stl libc++ --unified-headers \
             --install-dir "${CROSS_DIR}" --force
 
@@ -26,9 +26,10 @@ CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
             --cc="${CROSS_PREFIX}clang" \
             --as="${CROSS_PREFIX}gcc" \
             --sysroot="${CROSS_DIR}/sysroot" --enable-cross-compile --target-os=android \
-            --arch=${ARCH} --cpu=cortex-a9 \
+            --arch="${ARCH}" \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
-            --extra-ldflags='-fPIE -pie' --enable-shared --disable-symver
+            --extra-ldflags='-fPIE -pie' \
+            --enable-shared --disable-symver --disable-doc
 
 make -j16
 
