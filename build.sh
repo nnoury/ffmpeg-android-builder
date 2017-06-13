@@ -8,7 +8,7 @@ if [[ ! $# -eq 1 ]] ; then
 fi
 
 LOCAL_PATH=$(readlink -f .)
-NDK_PATH=$(dirname $(which ndk-build))
+NDK_PATH=$(dirname "$(which ndk-build)")
 
 if [ ! -d ffmpeg ]; then
 	#git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
@@ -44,14 +44,14 @@ esac
 
 CROSS_DIR="$(mktemp -d)"
 
-${NDK_PATH}/build/tools/make_standalone_toolchain.py \
+"${NDK_PATH}"/build/tools/make_standalone_toolchain.py \
             --arch "${ARCH}" --api ${ANDROID_API} \
             --stl libc++ --unified-headers \
             --install-dir "${CROSS_DIR}" --force
 
 CONFIG_LIBAV= #to be customized if needed
 
-pushd ${FFMPEG_PATH}
+pushd "${FFMPEG_PATH}"
 
 git clean -fdx
 
