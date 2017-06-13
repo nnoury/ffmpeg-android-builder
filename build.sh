@@ -7,7 +7,7 @@ if [[ ! $# -eq 1 ]] ; then
 	exit 1
 fi
 
-
+LOCAL_PATH=$(readlink -f .)
 NDK_PATH=$(dirname $(which ndk-build))
 
 if [ ! -d ffmpeg ]; then
@@ -49,23 +49,27 @@ ${NDK_PATH}/build/tools/make_standalone_toolchain.py \
             --stl libc++ --unified-headers \
             --install-dir "${CROSS_DIR}" --force
 
+CONFIG_LIBAV= #to be customized if needed
+
 pushd ${FFMPEG_PATH}
 
 git clean -fdx
-
 
 CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
 
 ./configure --cross-prefix="${CROSS_PREFIX}" \
             --cc="${CROSS_PREFIX}clang" \
             --as="${CROSS_PREFIX}gcc" \
-            --sysroot="${CROSS_DIR}/sysroot" --enable-cross-compile --target-os=android \
+            --sysroot="${CROSS_DIR}/sysroot" --sysinclude="${CROSS_DIR}/sysroot/usr/include" \
+            --enable-cross-compile --target-os=android \
+            --prefix="${LOCAL_PATH}/android-${ARCH_TRIPLET}" \
             --arch="${ARCH}" \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
-            --enable-shared --disable-static --disable-symver --disable-doc
+            --enable-shared --disable-static --disable-symver --disable-doc \
+            ${CONFIG_LIBAV}
 
-make -j16
+make -j16 install
 
 popd
 
