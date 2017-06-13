@@ -10,6 +10,17 @@ fi
 LOCAL_PATH=$(readlink -f .)
 NDK_PATH=$(dirname "$(which ndk-build)")
 
+if [ -z ${NDK_PATH} ] || [ ! -d ${NDK_PATH} ] || [ ${NDK_PATH} == . ]; then
+	if [ ! -d android-ndk-r15 ]; then
+		echo "downloading android ndk..."
+		wget https://dl.google.com/android/repository/android-ndk-r15-linux-x86_64.zip
+		unzip android-ndk-r15-linux-x86_64.zip
+		rm -f android-ndk-r15-linux-x86_64.zip
+	fi
+	echo 'using integrated ndk'
+	NDK_PATH=$(readlink -f android-ndk-r15)
+fi
+
 if [ ! -d ffmpeg ]; then
 	#git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 	git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
