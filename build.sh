@@ -74,7 +74,7 @@ CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
             --as="${CROSS_PREFIX}gcc" \
             --sysroot="${CROSS_DIR}/sysroot" --sysinclude="${CROSS_DIR}/sysroot/usr/include" \
             --enable-cross-compile --target-os=android \
-            --prefix="${LOCAL_PATH}/android-${FLAVOR}-${ARCH_TRIPLET}" \
+            --prefix="${LOCAL_PATH}/dist-${FLAVOR}-${ARCH_TRIPLET}" \
             --arch="${ARCH}" \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
