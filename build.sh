@@ -8,9 +8,14 @@ if [[ ! $# -eq 1 ]] ; then
 fi
 
 
-NDK_PATH=/mnt/ssd/noury/mc/android-ndk
-FFMPEG_PATH=/mnt/ssd2/noury/dev/ffmpeg
+NDK_PATH=$(dirname $(which ndk-build))
 
+if [ ! -d ffmpeg ]; then
+	#git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+	git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
+fi
+
+FFMPEG_PATH=$(readlink -f ffmpeg)
 ANDROID_API=14
 ARCH="$1"
 
