@@ -33,19 +33,25 @@ ARCH="$1"
 case "${ARCH}" in
 	'arm')
 		ARCH_TRIPLET='arm-linux-androideabi'
+		ABI='armeabi-v7a'
 		ARCH_CFLAGS='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb' ;;
 	'arm64')
 		ARCH_TRIPLET='aarch64-linux-android'
+		ABI='arm64-v8a'
 		ANDROID_API=21 ;;
         'mips')
-		ARCH_TRIPLET='mipsel-linux-android';;
+		ARCH_TRIPLET='mipsel-linux-android'
+		ABI='mips' ;;
         'mips64')
 		ARCH_TRIPLET='mips64el-linux-android'
+		ABI='mips64'
 		ANDROID_API=21 ;;
         'x86')
-		ARCH_TRIPLET='i686-linux-android';;
+		ARCH_TRIPLET='i686-linux-android'
+		ABI='x86' ;;
         'x86_64')
 		ARCH_TRIPLET='x86_64-linux-android'
+		ABI='x86_64'
 		ANDROID_API=21 ;;
 	*)
 		echo "Arch ${ARCH} is not supported."
@@ -74,7 +80,7 @@ CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
             --as="${CROSS_PREFIX}gcc" \
             --sysroot="${CROSS_DIR}/sysroot" --sysinclude="${CROSS_DIR}/sysroot/usr/include" \
             --enable-cross-compile --target-os=android \
-            --prefix="${LOCAL_PATH}/dist-${FLAVOR}-${ARCH_TRIPLET}" \
+            --prefix="${LOCAL_PATH}/dist-${FLAVOR}-${ABI}" \
             --arch="${ARCH}" \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
