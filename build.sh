@@ -23,7 +23,7 @@ fi
 
 if [ ! -d ffmpeg ]; then
 	#git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-	git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
+	git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg -b n3.3.2
 fi
 
 FFMPEG_PATH=$(readlink -f ffmpeg)
