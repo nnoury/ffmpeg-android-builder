@@ -30,6 +30,8 @@ FFMPEG_PATH=$(readlink -f ffmpeg)
 ANDROID_API=14
 ARCH="$1"
 
+ARCH_CONFIG_OPT=
+
 case "${ARCH}" in
 	'arm')
 		ARCH_TRIPLET='arm-linux-androideabi'
@@ -48,6 +50,7 @@ case "${ARCH}" in
 		ANDROID_API=21 ;;
         'x86')
 		ARCH_TRIPLET='i686-linux-android'
+		ARCH_CONFIG_OPT='--disable-asm'
 		ABI='x86' ;;
         'x86_64')
 		ARCH_TRIPLET='x86_64-linux-android'
@@ -81,7 +84,7 @@ CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
             --sysroot="${CROSS_DIR}/sysroot" --sysinclude="${CROSS_DIR}/sysroot/usr/include" \
             --enable-cross-compile --target-os=android \
             --prefix="${LOCAL_PATH}/dist-${FLAVOR}-${ABI}" \
-            --arch="${ARCH}" \
+            --arch="${ARCH}" ${ARCH_CONFIG_OPT} \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
             --enable-shared --disable-static --disable-symver --disable-doc \
