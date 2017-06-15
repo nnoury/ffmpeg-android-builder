@@ -21,12 +21,12 @@ if [ -z ${NDK_PATH} ] || [ ! -d ${NDK_PATH} ] || [ ${NDK_PATH} == . ]; then
 	NDK_PATH=$(readlink -f android-ndk-r15)
 fi
 
-if [ ! -d ffmpeg ]; then
+if [ ! -d ffmpeg.git ]; then
 	#git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-	git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg -b n3.3.2
+	git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg.git --bare --depth=1 -b n3.3.2
 fi
 
-FFMPEG_PATH=$(readlink -f ffmpeg)
+FFMPEG_BARE_PATH=$(readlink -f ffmpeg.git)
 ANDROID_API=14
 ARCH="$1"
 
@@ -63,6 +63,8 @@ esac
 
 
 CROSS_DIR="$(mktemp -d)"
+FFMPEG_DIR="$(mktemp -d)"
+git clone "${FFMPEG_BARE_PATH}" "${FFMPEG_DIR}"
 
 "${NDK_PATH}"/build/tools/make_standalone_toolchain.py \
             --arch "${ARCH}" --api ${ANDROID_API} \
@@ -72,29 +74,31 @@ CROSS_DIR="$(mktemp -d)"
 CONFIG_LIBAV= #to be customized if needed
 FLAVOR='default'
 
-pushd "${FFMPEG_PATH}"
+pushd "${FFMPEG_DIR}"
 
 git clean -fdx
 
 CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
 
-mkdir -p "${LOCAL_PATH}/dist-${FLAVOR}-${ABI}"
+mkdir -p "${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}"
 
 ./configure --cross-prefix="${CROSS_PREFIX}" \
             --cc="${CROSS_PREFIX}clang" \
             --as="${CROSS_PREFIX}gcc" \
             --sysroot="${CROSS_DIR}/sysroot" --sysinclude="${CROSS_DIR}/sysroot/usr/include" \
             --enable-cross-compile --target-os=android \
-            --prefix="${LOCAL_PATH}/dist-${FLAVOR}-${ABI}" \
+            --prefix="${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}" \
             --arch="${ARCH}" ${ARCH_CONFIG_OPT} \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
             --enable-shared --disable-static --disable-symver --disable-doc \
-            ${CONFIG_LIBAV} > "${LOCAL_PATH}/dist-${FLAVOR}-${ABI}/configure.log"
+            ${CONFIG_LIBAV} > "${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}/configure.log"
 
 make -j16 install
 
 popd
 
 rm -Rf "${CROSS_DIR}"
+cp -R "${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}"  "${LOCAL_PATH}/"
+rm -Rf "${FFMPEG_DIR}"
 
