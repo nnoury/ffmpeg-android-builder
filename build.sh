@@ -78,6 +78,8 @@ git clean -fdx
 
 CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
 
+mkdir -p "${LOCAL_PATH}/dist-${FLAVOR}-${ABI}"
+
 ./configure --cross-prefix="${CROSS_PREFIX}" \
             --cc="${CROSS_PREFIX}clang" \
             --as="${CROSS_PREFIX}gcc" \
@@ -88,7 +90,7 @@ CROSS_PREFIX="${CROSS_DIR}/bin/${ARCH_TRIPLET}-"
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
             --extra-ldflags='-fPIE -pie' \
             --enable-shared --disable-static --disable-symver --disable-doc \
-            ${CONFIG_LIBAV}
+            ${CONFIG_LIBAV} > "${LOCAL_PATH}/dist-${FLAVOR}-${ABI}/configure.log"
 
 make -j16 install
 
