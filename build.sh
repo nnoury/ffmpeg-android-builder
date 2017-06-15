@@ -88,6 +88,7 @@ mkdir -p "${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}"
 ./configure --cross-prefix="${CROSS_PREFIX}" \
             --cc="${CROSS_PREFIX}clang" \
             --as="${CROSS_PREFIX}gcc" \
+            --yasmexe="${CROSS_DIR}/bin/yasm" \
             --sysroot="${CROSS_DIR}/sysroot" --sysinclude="${CROSS_DIR}/sysroot/usr/include" \
             --enable-cross-compile --target-os=android \
             --prefix="${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}" \
