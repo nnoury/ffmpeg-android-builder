@@ -36,7 +36,8 @@ case "${ARCH}" in
 	'arm')
 		ARCH_TRIPLET='arm-linux-androideabi'
 		ABI='armeabi-v7a'
-		ARCH_CFLAGS='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb' ;;
+		ARCH_CFLAGS='-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mthumb'
+		ARCH_LDFLAGS='-march=armv7-a -Wl,--fix-cortex-a8' ;;
 	'arm64')
 		ARCH_TRIPLET='aarch64-linux-android'
 		ABI='arm64-v8a'
@@ -51,10 +52,12 @@ case "${ARCH}" in
         'x86')
 		ARCH_TRIPLET='i686-linux-android'
 		ARCH_CONFIG_OPT='--disable-asm'
+		ARCH_CFLAGS='-march=i686 -mtune=intel -mssse3 -mfpmath=sse -m32'
 		ABI='x86' ;;
         'x86_64')
 		ARCH_TRIPLET='x86_64-linux-android'
 		ABI='x86_64'
+		ARCH_CFLAGS='-march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=intel'
 		ANDROID_API=21 ;;
 	*)
 		echo "Arch ${ARCH} is not supported."
@@ -90,7 +93,7 @@ mkdir -p "${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}"
             --prefix="${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}" \
             --arch="${ARCH}" ${ARCH_CONFIG_OPT} \
             --extra-cflags="${ARCH_CFLAGS} -fPIC -fPIE -DPIC -D__ANDROID_API__=${ANDROID_API}" \
-            --extra-ldflags='-fPIE -pie' \
+            --extra-ldflags="${ARCH_LDFLAGS} -fPIE -pie" \
             --enable-shared --disable-static --disable-symver --disable-doc \
             ${CONFIG_LIBAV} > "${FFMPEG_DIR}/dist-${FLAVOR}-${ABI}/configure.log"
 
