@@ -1,7 +1,20 @@
 #!/bin/bash
 
-if [[ ! $# -eq 1 ]] ; then
-	echo 'You need to input arch.'
+while getopts "a:c:" opt; do
+  case $opt in
+    a)
+	ARCH=$OPTARG ;;
+    c)
+	FLAVOR=$OPTARG ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [[ ! -z "${ARCH}" ]] ; then
+	echo 'You need to input arch with -a ARCH.'
 	echo 'Supported archs are:'
 	echo -e '\tarm arm64 mips mips64 x86 x86_64'
 	exit 1
@@ -28,7 +41,6 @@ fi
 
 FFMPEG_BARE_PATH=$(readlink -f ffmpeg.git)
 ANDROID_API=14
-ARCH="$1"
 
 ARCH_CONFIG_OPT=
 
@@ -74,8 +86,13 @@ git clone "${FFMPEG_BARE_PATH}" "${FFMPEG_DIR}"
             --stl libc++ --unified-headers \
             --install-dir "${CROSS_DIR}" --force
 
-CONFIG_LIBAV= #to be customized if needed
-FLAVOR='default'
+#here we source a file that sets CONFIG_LIBAV string to the config we want
+if [ -f "${FLAVOR}" ]; then
+	. "${FLAVOR}"
+else
+	FLAVOR='default'
+	CONFIG_LIBAV=
+fi
 
 pushd "${FFMPEG_DIR}"
 
