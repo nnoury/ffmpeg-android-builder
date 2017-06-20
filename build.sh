@@ -13,7 +13,7 @@ while getopts "a:c:" opt; do
   esac
 done
 
-if [[ ! -z "${ARCH}" ]] ; then
+if [[ -z "${ARCH}" ]] ; then
 	echo 'You need to input arch with -a ARCH.'
 	echo 'Supported archs are:'
 	echo -e '\tarm arm64 mips mips64 x86 x86_64'
